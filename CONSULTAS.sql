@@ -23,10 +23,8 @@ SELECT id_client_app,d_name,d_status FROM client_app WHERE user_id = "1";
 
 /*Consulta 4: Retorne o último de USER registrado no sistema e seu ClientAPP.*/
 
-/*SELECT name FROM user WHERE id_user=(SELECT MAX(id_user) FROM user);
-SELECT d_name FROM client_app WHERE user_id=(SELECT MAX(id_user) FROM user);*/
-
 SELECT name,d_name FROM user JOIN client_app WHERE id_user=(SELECT MAX(id_user) FROM user) AND user_id=(SELECT MAX(id_user) FROM user);
+
 /*Consulta 5: Retorne o último USER a acessar o sistema e seu ClientAPP.*/
 
 

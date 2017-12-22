@@ -1,0 +1,133 @@
+/* UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - DEE */
+/* DEPARTAMENTO DE ENGENHARIA ELÉTRICA - DEE */
+/* DISCIPLINA: INFORMÁTICA INDUSTRIAL */
+/* PEDRO BARROS TORREÃO GAIÃO - 113210495 */
+/* SEGUNDO ESTÁGIO */
+/* PROJETO DE BANCO DE DADOS - SMARTHOUSE*/
+
+/*TABELAS*/
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS client_app;
+DROP TABLE IF EXISTS consumption;
+DROP TABLE IF EXISTS cameras;
+DROP TABLE IF EXISTS suite;
+DROP TABLE IF EXISTS multimidia;
+DROP TABLE IF EXISTS garden;
+
+CREATE TABLE user (
+    id_user INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(25) NOT NULL,
+    password VARCHAR(6) NOT NULL,
+    funct VARCHAR(25)
+);
+
+CREATE TABLE client_app (
+    id_client_app INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    d_name VARCHAR(25) NOT NULL,
+    d_status VARCHAR(10),
+    description VARCHAR(50) NOT NULL,
+    user_id INT NOT NULL,
+     CONSTRAINT FK_client_app_user FOREIGN KEY (user_id) 
+	  REFERENCES user (id_user)
+);	
+
+CREATE TABLE consumption(
+	daily INT,
+	weekly INT,
+	device_id INT NOT NULL,
+	CONSTRAINT FK_consumption FOREIGN KEY(device_id)
+	REFERENCES client_app(id_client_app)
+);
+
+CREATE TABLE cameras(
+	camera_id INT AUTO_INCREMENT,
+	device_id2 INT,
+	PRIMARY KEY(camera_id,device_id2),
+	CONSTRAINT FK_cameras FOREIGN KEY(device_id2)
+	REFERENCES client_app(id_client_app)
+);
+
+CREATE TABLE suite(
+	suite_id INT AUTO_INCREMENT,
+	device_id3 INT,
+	PRIMARY KEY(suite_id, device_id3),
+	CONSTRAINT FK_suite FOREIGN KEY (device_id3)
+	REFERENCES client_app(id_client_app)
+);
+
+CREATE TABLE multimidia(
+	multimidia_id INT AUTO_INCREMENT,
+	device_id4 INT,
+	PRIMARY KEY(multimidia_id, device_id4),
+	CONSTRAINT FK_multimidia FOREIGN KEY (device_id4)
+	REFERENCES client_app(id_client_app)
+);
+
+CREATE TABLE garden(
+	garden_id INT AUTO_INCREMENT,
+	watering_schedule DATE,
+	device_id5 INT,
+	PRIMARY KEY(garden_id, device_id5),
+	CONSTRAINT FK_garden FOREIGN KEY (device_id5)
+	REFERENCES client_app(id_client_app)
+);
+
+/*INSERÇÕES*/
+
+INSERT INTO user(name,password,funct)  values("NICACIO", "123456", "RESIDENTE");
+INSERT INTO user(name,password,funct)  values("PEDRO", "654321", "FUNCIONARIO");
+INSERT INTO user(name,password,funct)  values("DANILO", "135791", "RESIDENTE");
+INSERT INTO user(name,password,funct)  values("NOEL", "123456", "FUNCIONARIO");
+INSERT INTO user(name,password,funct)  values("PAULO", "123456", "VISITANTE");
+
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("AR COND.", "ESTABILIZA A TEMPERATURA AMBIENTE","2","ON");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("LUZES", "APAGAR/ACENDER ILUMINAÇÃO AMBIENTE","3","ON");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("TV", "ASSISTA PROGRAMAS, JOGOS, FILMES, ETC.","4","OFF");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("RADIO", "OUVIR MUSICA/RADIO","5","ON");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("AR COND.", "ESTABILIZA A TEMPERATURA AMBIENTE","5","ON");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("CORTINAS", "ABRIR/FECHAR","1","OPEN");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("CAMERA", "MONITORAMENTO","1","ON");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("CAMERA", "MONITORAMENTO","2","OFF");
+INSERT INTO client_app(d_name,description,user_id,d_status)  values("IRRIGADOR","IRRIGAÇÃO DO JARDIM","1","OFF");
+
+INSERT INTO consumption(daily,weekly,device_id) values("100","500","3");
+INSERT INTO consumption(daily,weekly,device_id) values("100","1500","4");
+INSERT INTO consumption(daily,weekly,device_id) values("500","2500","1");
+INSERT INTO consumption(daily,weekly,device_id) values("500","2500","5");
+
+INSERT INTO cameras(device_id2) values("7");
+INSERT INTO cameras(device_id2) values("8");
+
+INSERT INTO multimidia(device_id4) values("2");
+INSERT INTO multimidia(device_id4) values("3");
+INSERT INTO multimidia(device_id4) values("4");
+INSERT INTO multimidia(device_id4) values("1");
+
+INSERT INTO suite(device_id3) values("5");
+INSERT INTO suite(device_id3) values("6");
+
+INSERT INTO garden(device_id5,watering_schedule) values("9","20171231");
+
+
+/*CONSULTAS*/
+
+	/*Consulta 1: Retorne a ID, Nome e os ClientAPP para todos os usuários*/
+
+SELECT id_user,name FROM user;
+SELECT d_name,user_id FROM client_app;
+
+	/*Consulta 2: Liste todos dispositivos que estão ligados.*/
+
+SELECT * FROM client_app WHERE d_status = "ON";
+
+	/*Consulta 3: Liste os dispositivos (ID, Nome e Status) que estão associados a um USER X.*/
+
+SELECT id_client_app,d_name,d_status FROM client_app WHERE user_id = "1";
+
+	/*Consulta 4: Retorne o último de USER registrado no sistema e seu ClientAPP.*/
+
+SELECT name,d_name FROM user JOIN client_app WHERE id_user=(SELECT MAX(id_user) FROM user) AND user_id=(SELECT MAX(id_user) FROM user);
+
+	/*Consulta 5: Retorne o último USER a acessar o sistema e seu ClientAPP.*/
+
+
